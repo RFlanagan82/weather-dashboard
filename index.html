@@ -28,54 +28,131 @@
                     <!--This form will be where users input city selection-->
                     <form id = "city-form">
                         <input type="text" id="city-input">
-                        <!--
-                            Button triggers new city to be searched
-                        -->
+                        <!--Button triggers new city to be searched-->
                         <button class ="searchBtn">
                             <i class="fas fa-search"></i> 
                         </button>
                     </form>
+                    <!--Searched Cities will get dumped here.-->
+                    <ul id= "citiesList"></ul>
                 </div>
-                <div class="col-sm-8 selected-city-stats"></div>
+                <div class="col-sm-8 city-stats">
+                    <!-- Retrieved data will be dumped here -->
+                    <!--Our Divs are already available here to be appended starting on line 30.-->
+                    <h3 class="cityName &nbsp; current-day"></h3>
+                    <ul class= "city-details">
+                        <div class= "temp"></div>
+                        <div class= "humidity"></div>
+                        <div class= "wind"></div>
+                        <div class= "uv-index"></div>
+                    </ul>
+                </div>
             </div>
         </div>
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
         <script type="text/javascript">
-        
-        //WHEN I search for a city
-        //THEN I am presented with current and future conditions for that city and that city is added to the search history
-        
-        
-        
+
+            // This is my API key.
+            var APIKey = "6ea08e9662671517b8781da78c3e36a4";
 
 
-        //WHEN I view current weather conditions for that city
-        //THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-        
+            
+            //WHEN I search for a city
+
+            //The city from the textbox is then added to our array
+            
+            var savedCity = [""];
+
+            var cityInput = $("#city-input").val();
+            console.log(cityInput);
+
+            //Here is the URL I need to query the Open Weather Map.org site
+            var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityInput + "&appid=6ea08e9662671517b8781da78c3e36a4" + "&units:imperial"; //need to make city name dynamic.
+
+            //THEN I am presented with current and future conditions for that city and that city is added to the search history
+
+            $.ajax({
+            url: queryURL,
+            method: "GET"
+            }).then(function(response) {
+
+            //DOM Elements
+            console.log(response);
+            var cityNameEl = $(".cityName").text("City name: " + response.name);
+            var tempEl = $(".temp").text("Temperature: " + response.main.temp + "degrees F");
+            var humidityEl = $(".humidity").text("Humidity: " + response.main.humidity);
+            var windEl = (".wind").text("Wind speed: " + response.wind.speed + "miles/hour");
+            //var uvIndexEl = (".uv-index"); Need to figure out how to get UV data
+
+            console.log(queryURL);
 
 
-        
-        
-        //WHEN I view the UV index
-        //THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-        
-        
+
+            });
 
 
-        //WHEN I view future weather conditions for that city
-        //THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
-        
-        
-        //WHEN I click on a city in the search history
-        //THEN I am again presented with current and future conditions for that city
-        
-        
-        
-        
-        //WHEN I open the weather dashboard
-        //THEN I am presented with the last searched city forecast
-        
+            //Need to create function to collect current date to place it next to city.
+            var currentDay = $(".current-day");
+
+            function getDate(){
+                var today = moment().format('l');
+                console.log("Current Date is " + today);
+                currentDay.text("(" + today + ")");
+            };
+            
+            //Call getDate function
+            getDate();
+
+
+
+            //Create add event listener for search button when clicked
+
+            $(".searchBtn").on("click", function(event) {
+                event.preventDefault();
+                
+                console.log(cityInput);
+                savedCity.push(cityInput);
+                localStorage.setItem(cityInput,cityNameEl);
+            });
+            
+            //This line will grab the text from the city input box
+            
+
+            
+
+
+            
+            
+
+
+            //WHEN I view current weather conditions for that city
+            //THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
+            
+
+
+            
+            
+            //WHEN I view the UV index
+            //THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
+            
+            
+
+
+            //WHEN I view future weather conditions for that city
+            //THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
+            
+            
+            //WHEN I click on a city in the search history
+            //THEN I am again presented with current and future conditions for that city
+            
+            
+            
+            
+            //WHEN I open the weather dashboard
+            //THEN I am presented with the last searched city forecast
+            
         
         
         

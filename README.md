@@ -20,6 +20,8 @@ All of the files necessary to access this website are available inside [this rep
 ## Resources
 
 -[Font Awesome:](https://fontawesome.com/icons/search)
+-[OpenWeatherMap.org](https://openweathermap.org/current)
+-[moment.js](https://momentjs.com/)
 
 
 ## License
