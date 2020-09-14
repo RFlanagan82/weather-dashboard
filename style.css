@@ -1,0 +1,14 @@
+.jumbotron {
+    background-color: #2F4F4F;
+    border: none;
+    resize: none;
+    color: whitesmoke;
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
+};
+
+.fa-search {
+    background-color: blue;
+    color: white;
+};
