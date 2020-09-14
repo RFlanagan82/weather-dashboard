@@ -17,36 +17,45 @@
         crossorigin="anonymous"/>
         <link rel="stylesheet" href="./style.css">
     </head>
+
     <body>
         <div class="jumbotron">
             <h1 class="display-4">Weather Dashboard</h1>
           </div>
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-4 city-index">
-                    <p>Search for a City:</p>
+                <aside class="col-sm-4 bg-light city-index">
+                    <h4>Search for a City:</h4>
                     <!--This form will be where users input city selection-->
-                    <form id = "city-form">
-                        <input type="text" id="cityinput">
+                    <form class = "form-inline form-group" id = "city-form">
+                        <input class="form-control" type="text" id="cityinput">
                         <!--Button triggers new city to be searched-->
-                        <button class ="searchBtn">
+                        <button class ="searchBtn btn btn-primary">
                             <i class="fas fa-search"></i> 
                         </button>
                     </form>
+                    <br>
                     <!--Searched Cities will get dumped here.-->
-                    <ul id= "citiesList"></ul>
-                </div>
+                    <ul class="list-group" id="citiesList"></ul>
+                </aside>
                 <div class="col-sm-8 border city-stats">
                     <!-- Retrieved data will be dumped here -->
                     <!--Our Divs are already available here to be appended starting on line 30.-->
-                    <h3 class="cityName"></h3>
-                    <h3 class="current-day"></h3>
-                    <ul class= "city-details">
-                        <div class= "temp"></div>
-                        <div class= "humidity"></div>
-                        <div class= "wind"></div>
-                        <div class= "uv-index"></div>
-                    </ul>
+                    <!-- <div id="todayForecast">                     -->
+                        <h3 class="cityName"></h3>
+                        <h3 class="current-day"></h3>
+                        <ul class= "city-details">
+                            <div class= "temp"></div>
+                            <div class= "humidity"></div>
+                            <div class= "wind"></div>
+                            <div class= "uv-index"></div>
+                        </ul>
+                    <!-- </div> -->
+
+                    <div class="5-Day-Forecast">
+                        <h3 class="forecastHeader" id="forecastheader">5 Day Forecast:</h3>
+                        <div class ="row" id="fiveDayForecastView"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,8 +67,6 @@
             // This is my API key.
             var APIKey = "6ea08e9662671517b8781da78c3e36a4";
 
-            var cityInput;
-
             
             //WHEN I search for a city
 
@@ -67,12 +74,15 @@
             
             var savedCity = [];
 
+            //WHEN I view current weather conditions for that city
+            //THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
+
             function searchCity() {
             var cityInput = $("#cityinput").val();
             console.log(cityInput);
 
             //Here is the URL I need to query the Open Weather Map.org site
-            var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityInput + "&appid=6ea08e9662671517b8781da78c3e36a4" + "&units:imperial"; //need to make city name dynamic.
+            var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityInput + "&appid=6ea08e9662671517b8781da78c3e36a4" + "&units=imperial"; //need to make city name dynamic.
 
             //THEN I am presented with current and future conditions for that city and that city is added to the search history
 
@@ -84,21 +94,51 @@
                 //DOM Elements
                 console.log(response);
 
-                console.log(queryURL);
+               //console.log(queryURL);
                 
                 var cityNameEl = $(".cityName").text(response.name + " " + "(" + moment().format('l') + ")");
                 
                 var tempEl = $(".temp").text("Temperature: " + response.main.temp + " F");
                 var humidityEl = $(".humidity").text("Humidity: " + response.main.humidity + "%");
                 var windEl = $(".wind").text("Wind speed: " + response.wind.speed + " MPH");
-                //var uvIndexEl = (".uv-index"); Need to figure out how to get UV data
-    
-                });
+                var uvIndexEl = $(".uv-index");
+                var fiveDayForecastEl = $(".fiveDayForecastView");
+
+                var queryURL_UV =
+                "https://api.openweathermap.org/data/2.5/uvi?appid=" + "6ea08e9662671517b8781da78c3e36a4" + "&lat=" + response.coord.lat + "&lon=" +
+                response.coord.lon;
+
+                    $.ajax({
+                    url: queryURL_UV,
+                    method: "GET"
+                    }).then(function(data){
+                        //console.log(response.value);
+                        //console.log(queryURL_UV);
+
+                        
+                        //WHEN I view the UV index
+                        //THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
+                        var body = $("<span>").addClass("btn btn-sm").text("UV Index:" + data.value)
+                        if(data.value < 3){
+                            body.addClass('btn-success')
+                        } else if (data.value < 7){
+                            body.addClass('btn-warning')
+                        } else {
+                            body.addClass('btn-danger')
+                        }
+                        uvIndexEl.append(body)
+                    })
+
+                    renderCityBtns();
+
+                    fiveDayForecast(cityInput);
+
+                    });
+
                 savedCity.push(cityInput);
-                console.log(savedCity);
+                //console.log(savedCity);
                 localStorage.setItem(cityInput, savedCity);
             };
-
 
 
             //Create add event listener for search button when clicked
@@ -109,37 +149,61 @@
                 
             });
             
-            //This line will grab the text from the city input box
             
-
-            
-
-
-            
-            
-
-
-            //WHEN I view current weather conditions for that city
-            //THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-            
-
-
-            
-            
-            //WHEN I view the UV index
-            //THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-            
-            
-
 
             //WHEN I view future weather conditions for that city
             //THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
-            
+
+            function fiveDayForecast(cityInput){
+                console.log("Hello World");
+                var fiveDayCity = $("#cityinput").val();
+
+                var fiveDayQueryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityInput + "&appid=6ea08e9662671517b8781da78c3e36a4" + "&units=imperial";
+                
+                $.ajax({
+                    url: fiveDayQueryURL,
+                    method: "GET"
+                    }).then(function(data){
+                        console.log(data);
+                        $("#fiveDayForecastView").empty();
+                        for ( var i = 0; i < data.list.length; i=i+8) {
+
+                            console.log(data.list[i]);
+                            var datalist = data.list[i]
+                            var column = $("<div>").addClass("col-sm-2")
+                            var card = $("<div>").addClass("card bg-primary text-white")
+                            var forecastDate = $("<h5>").addClass("card-title").text(new Date(datalist.dt_txt).toLocaleDateString())
+                            var icon = $("<img>").attr("src", `https://openweathermap.org/img/w/${datalist.weather[0].icon}.png`)
+                            var temp = $("<p>").addClass("card-text").text("Temp: " + datalist.main.temp);
+                            var humidity = $("<p>").addClass("card-text").text("Humidity: " + datalist.main.humidity);
+                            
+                            card.append(forecastDate);
+                            card.append(icon);
+                            card.append(temp);
+                            card.append(humidity);
+                            column.append(card); 
+
+                            $("#fiveDayForecastView").append(column);
+                        }
+                        
+                        //console.log(fiveDayQueryURL);
+                        //fiveDayForecastEl.attr(fiveDayForecastResult);
+                    });
+            };
+
             
             //WHEN I click on a city in the search history
             //THEN I am again presented with current and future conditions for that city
             
-            
+            function renderCityBtns(){
+                var cityBtnsEl = $(".btn-group");
+                $(".btn-group").empty();
+
+                for (var i = 0; i < savedCity.length; i++){
+                    var newButton = $("<button>").text(savedCity[i]);
+                    $(".btn-group").append(newButton);
+                }
+            }
             
             
             //WHEN I open the weather dashboard

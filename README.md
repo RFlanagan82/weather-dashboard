@@ -16,6 +16,8 @@ All of the files necessary to access this website are available inside [this rep
 
 ## Challenges & Contributions
 
+-Christina Starr - Formatting the QueryURL_UV Ajax call.
+-Andrew Siegel - UV Help: Finding perameter in the API
 
 ## Resources
 
