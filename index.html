@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -40,8 +36,6 @@
                 </aside>
                 <div class="col-sm-8 border city-stats">
                     <!-- Retrieved data will be dumped here -->
-                    <!--Our Divs are already available here to be appended starting on line 30.-->
-                    <!-- <div id="todayForecast">                     -->
                         <h3 class="cityName"></h3>
                         <h3 class="current-day"></h3>
                         <ul class= "city-details">
@@ -50,8 +44,6 @@
                             <div class= "wind"></div>
                             <div class= "uv-index"></div>
                         </ul>
-                    <!-- </div> -->
-
                     <div class="5-Day-Forecast">
                         <h3 class="forecastHeader" id="forecastheader">5 Day Forecast:</h3>
                         <div class ="row" id="fiveDayForecastView"></div>
@@ -112,10 +104,11 @@
                     url: queryURL_UV,
                     method: "GET"
                     }).then(function(data){
+                        $(".uv-index").empty();
                         //console.log(response.value);
                         //console.log(queryURL_UV);
 
-                        
+
                         //WHEN I view the UV index
                         //THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
                         var body = $("<span>").addClass("btn btn-sm").text("UV Index:" + data.value)
@@ -127,7 +120,7 @@
                             body.addClass('btn-danger')
                         }
                         uvIndexEl.append(body)
-                    })
+                    });
 
                     renderCityBtns();
 
@@ -140,17 +133,13 @@
                 localStorage.setItem(cityInput, savedCity);
             };
 
-
             //Create add event listener for search button when clicked
-
             $(".searchBtn").on("click", function(event) {
                 event.preventDefault();
                 searchCity();
                 
             });
             
-            
-
             //WHEN I view future weather conditions for that city
             //THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
 
@@ -185,36 +174,30 @@
 
                             $("#fiveDayForecastView").append(column);
                         }
-                        
                         //console.log(fiveDayQueryURL);
                         //fiveDayForecastEl.attr(fiveDayForecastResult);
                     });
             };
 
-            
             //WHEN I click on a city in the search history
             //THEN I am again presented with current and future conditions for that city
             
             function renderCityBtns(){
-                var cityBtnsEl = $(".btn-group");
-                $(".btn-group").empty();
+                var cityBtnsEl = $(".list-group");
+                $(".list-group").empty();
 
                 for (var i = 0; i < savedCity.length; i++){
                     var newButton = $("<button>").text(savedCity[i]);
-                    $(".btn-group").append(newButton);
-                }
-            }
-            
+                    $(".list-group").append(newButton);
+                };
+            };
             
             //WHEN I open the weather dashboard
             //THEN I am presented with the last searched city forecast
-            
         
         
         
         
         </script>
-
-
     </body>
 </html>
